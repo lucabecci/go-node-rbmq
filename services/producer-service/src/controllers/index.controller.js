@@ -13,8 +13,8 @@ class IndexRouter{
             author
         }
         try{
-            Broker.createQueue('network')
-            Broker.sendMessage('network', message)
+            Broker.createQueue(process.env.QUEUE_BROKER)
+            Broker.sendMessage(process.env.QUEUE_BROKER, message)
             res.status(200).json({
                 ok: true,
                 message

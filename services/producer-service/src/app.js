@@ -1,6 +1,6 @@
 const express = require('express');
 const morgan = require('morgan')
-
+require('dotenv/config')
 const BrokerFactory = require('./broker/BrokerFactory')
 const Broker = require('./broker/Broker')
 
@@ -18,7 +18,10 @@ class Server {
     }
 
     async initBroker(){
-        const brokerFactory = new BrokerFactory('node', 'node123', 'network');
+        const brokerFactory = new BrokerFactory(
+            process.env.USER_BROKER, 
+            process.env.PASSWORD_BROKER
+        );
         const channel = await brokerFactory.getChannel()
         Broker.loadChannel(channel)
     }

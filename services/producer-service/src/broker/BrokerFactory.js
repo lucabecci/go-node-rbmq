@@ -8,6 +8,8 @@ class BrokerFactory{
         this._channel = this.configuration(user, password)
     }
     async configuration(user, password){
+        setTimeout(() => {
+        }, 15000);
         let cnn;
         let retries = 5;
         while(retries){

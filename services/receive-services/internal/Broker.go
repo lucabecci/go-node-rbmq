@@ -1,10 +1,10 @@
 package internal
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 
-	"github.com/lucabecci/go-node-rbmq/services/receive-services/pkg"
 	"github.com/streadway/amqp"
 )
 
@@ -39,13 +39,13 @@ func Initialize(user string, password string) (*Broker, error) {
 
 //SaveTask is a method for save the task of rbmq
 func (broker *Broker) SaveTask(queue string) {
-	messages, _ := broker.channel.Consume(queue, "", true, false, false, false, nil)
+	messages, _ := broker.channel.Consume("network", "", true, false, false, false, nil)
 	go func() {
 		for message := range messages {
 			var msg string = string(message.Body)
 			data := &Message{}
 
-			result, err := pkg.TransformData(msg, data)
+			result, err := TransformData(msg, data)
 			if err != nil {
 				log.Fatal(err.Error())
 			}
@@ -60,4 +60,17 @@ func (broker *Broker) Close() {
 	broker.conn.Close()
 	broker.channel.Close()
 	fmt.Println("connection and channel closing...")
+}
+
+//TransformData is a function for transform the message of the broker
+func TransformData(msg string, data *Message) (string, error) {
+	err := json.Unmarshal([]byte(msg), data)
+	if err != nil {
+		return "", err
+	}
+	json, err := json.Marshal(data)
+	if err != nil {
+		return "", err
+	}
+	return string(json), nil
 }

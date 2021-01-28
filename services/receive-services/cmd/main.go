@@ -1,17 +1,24 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
+	"time"
 
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/lucabecci/go-node-rbmq/services/receive-services/internal"
 )
 
 func main() {
+	fmt.Println("APP WORKING")
 	user, password, queue := loadingENV()
-	broker, err := internal.Initialize(user, password)
+	fmt.Println(user, password)
+	//timeout for docker
+	time.Sleep(15 * time.Second)
+
+	broker, err := internal.Initialize("guest", "guest")
 
 	if err != nil {
 		log.Fatal(err.Error())

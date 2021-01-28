@@ -1,1 +1,29 @@
 #Docker compose for the services, broker and db
+version: "3"
+
+services: 
+    producer:
+        build: 
+            context: ./services/producer-service
+        ports: 
+            - "5000:5000"
+        links: [rabbitmq]
+    
+    consumer:
+        build: 
+            context: ./services/receive-services
+        links: [rabbitmq]
+
+    nginx:
+        restart: always
+        build: 
+            context: ./services/nginx-service
+        ports: 
+            - "81:80"
+
+    rabbitmq:
+        hostname: my-rabbit
+        image: rabbitmq:3-management
+        ports:
+            - 5672:5672
+            - 15672:15672

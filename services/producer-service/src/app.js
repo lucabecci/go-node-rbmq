@@ -18,10 +18,7 @@ class Server {
     }
 
     async initBroker(){
-        const brokerFactory = new BrokerFactory(
-            process.env.USER_BROKER, 
-            process.env.PASSWORD_BROKER
-        );
+        const brokerFactory = new BrokerFactory();
         const channel = await brokerFactory.getChannel()
         Broker.loadChannel(channel)
     }

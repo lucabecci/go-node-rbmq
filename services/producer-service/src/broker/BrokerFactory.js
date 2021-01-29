@@ -3,18 +3,18 @@ const amqp = require('amqplib')
 class BrokerFactory{
     _amqp
     _channel
-    constructor(user, password){
+    constructor(){
         this._amqp = amqp
-        this._channel = this.configuration(user, password)
+        this._channel = this.configuration()
     }
-    async configuration(user, password){
+    async configuration(){
         setTimeout(() => {
         }, 15000);
         let cnn;
         let retries = 5;
         while(retries){
             try{
-                cnn = await this._amqp.connect(`amqp://${user}:${password}@localhost:5672/`)
+                cnn = await this._amqp.connect(`amqp://rabbitmq`)
                 console.log('amqp is connected')
                 break
             }

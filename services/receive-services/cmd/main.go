@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"os/signal"
 	"time"
 
 	_ "github.com/joho/godotenv/autoload"
@@ -13,23 +12,23 @@ import (
 
 func main() {
 	fmt.Println("APP WORKING")
-	user, password, queue := loadingENV()
+	user, password, _ := loadingENV()
 	fmt.Println(user, password)
 	//timeout for docker
 	time.Sleep(15 * time.Second)
-
-	broker, err := internal.Initialize("guest", "guest")
+	noSTP := make(chan bool)
+	broker, err := internal.Initialize()
 
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-
-	broker.SaveTask(queue)
-
-	//If the developer use the Ctrl+C
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	<-c
+	broker.CreateQueue("network")
+	broker.SaveTask("network")
+	<-noSTP
+	// //If the developer use the Ctrl+C
+	// c := make(chan os.Signal, 1)
+	// signal.Notify(c, os.Interrupt)
+	// <-c
 	broker.Close()
 }
 

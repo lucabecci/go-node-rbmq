@@ -3,16 +3,20 @@ version: "3"
 
 services: 
     producer:
+        restart: always
         build: 
             context: ./services/producer-service
         ports: 
             - "5000:5000"
-        links: [rabbitmq]
+        links: 
+            - rabbitmq
     
     consumer:
+        restart: always
         build: 
             context: ./services/receive-services
-        links: [rabbitmq]
+        links: 
+            - rabbitmq
 
     nginx:
         restart: always
@@ -22,8 +26,9 @@ services:
             - "81:80"
 
     rabbitmq:
+        container_name: rabbit
         hostname: my-rabbit
-        image: rabbitmq:3-management
+        image: rabbitmq:3.7.4
         ports:
             - 5672:5672
             - 15672:15672

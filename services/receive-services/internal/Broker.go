@@ -22,8 +22,8 @@ type Message struct {
 }
 
 //Initialize is for start and configure the broker
-func Initialize(user string, password string) (*Broker, error) {
-	connection, err := amqp.Dial("amqp://" + user + ":" + password + "@localhost:5672/")
+func Initialize() (*Broker, error) {
+	connection, err := amqp.Dial("amqp://rabbitmq")
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -39,7 +39,7 @@ func Initialize(user string, password string) (*Broker, error) {
 
 //SaveTask is a method for save the task of rbmq
 func (broker *Broker) SaveTask(queue string) {
-	messages, _ := broker.channel.Consume("network", "", true, false, false, false, nil)
+	messages, _ := broker.channel.Consume(queue, "", true, false, false, false, nil)
 	go func() {
 		for message := range messages {
 			var msg string = string(message.Body)
@@ -60,6 +60,11 @@ func (broker *Broker) Close() {
 	broker.conn.Close()
 	broker.channel.Close()
 	fmt.Println("connection and channel closing...")
+}
+
+//CreateQueue is for create the queue if this not exists
+func (broker *Broker) CreateQueue(queue string) {
+	broker.channel.QueueDeclare(queue, false, false, false, false, nil)
 }
 
 //TransformData is a function for transform the message of the broker
